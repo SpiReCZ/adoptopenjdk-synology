@@ -46,12 +46,10 @@ SPK Packager maven plugin example:
 - DS415Play - has x86 32bit cpu which AdoptOpenJDK does not support.
 
 #### Java versions:
-- 11 (LTS) - static in UI
-- 8 (LTS) - static in UI
-- Latest (LTS)
-    - Dynamically changing based on API response from AdoptOpenJDK.net
-- Latest (feature release)
-    - Dynamically changing based on API response from AdoptOpenJDK.net
+- Dynamically changing based on API response from AdoptOpenJDK.net
+- Installer will show:
+  - All LTS releases (8, 11)
+  - Latest feature release (15)
 
 #### Installable on architectures:
 - x64
