@@ -21,6 +21,8 @@ tar -czf ../package.tgz ./*
 shopt -u dotglob
 cd ../
 
+cp ./WIZARD_UIFILES/install_uifile.sh ./WIZARD_UIFILES/upgrade_uifile.sh
+
 tar -cf "$filepath" INFO package.tgz scripts WIZARD_UIFILES
 if [ -f "${SCRIPTS_DIR}"/PACKAGE_ICON.PNG ]; then tar -rf "$filepath" PACKAGE_ICON.PNG; fi
 if [ -f "${SCRIPTS_DIR}"/PACKAGE_ICON_120.PNG ]; then tar -rf "$filepath" PACKAGE_ICON_120.PNG; fi

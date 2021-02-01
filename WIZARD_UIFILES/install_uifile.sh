@@ -117,7 +117,7 @@ if [ "$INSTALL_UI_EXIT_CODE" -ne 0 ]; then
       "items": [
         {
           "type": "singleselect",
-          "desc": "UI rendering error has occured.<br><br>This UI is dynamically generated, so there can be problem connecting to the server or API has changed. Try installing this package again.<br><br>Feel free to report the issue here: <a href=\"https://github.com/SpiReCZ/adoptopenjdk-synology/issues\" target=\"_blank\">LINK</a>.<br><br>",
+          "desc": "UI rendering error has occurred.<br><br>This UI is dynamically generated, so there can be problem connecting to the server or API has changed. Try installing this package again.<br><br>Feel free to report the issue here: <a href=\"https://github.com/SpiReCZ/adoptopenjdk-synology/issues\" target=\"_blank\">LINK</a>.<br><br>",
           "subitems": [
             {
               "key": "JAVA_UI_INSTALL_ERROR",

@@ -59,7 +59,7 @@ case $1 in
   status)
     . /etc/profile
     . /root/.profile
-    if [ -e "${JAVA_HOME}/bin/java" ]; then
+    if [ -e "${JAVA_HOME}/bin/java" ] && [ -x "${JAVA_HOME}/bin/java" ]; then
       exit 0
     else
       exit 1

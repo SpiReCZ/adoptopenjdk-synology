@@ -135,9 +135,6 @@ postinst() {
   #echo "Create directory $SYNOPKG_PKGDEST"
   mkdir -p "${SYNOPKG_PKGDEST:?}"
 
-  #echo "Remove old files"
-  rm -rf "${SYNOPKG_PKGDEST:?}"/*
-
   #echo "Unzip downloaded package"
   tar -xzf "${TEMP_FOLDER:?}/${JAVA_PKG_FILENAME:?}" -C "${SYNOPKG_PKGDEST:?}" --strip-components=1
 
@@ -157,11 +154,18 @@ preuninst () {
 }
 
 
-postuninst ()
-{
+postuninst () {
   #clean up profile mods
   sed -i "/${COMMENT}/d" /etc/profile
   sed -i "/${COMMENT}/d" /root/.profile
 
+  exit 0
+}
+
+preupgrade() {
+  exit 0
+}
+
+postupgrade() {
   exit 0
 }
