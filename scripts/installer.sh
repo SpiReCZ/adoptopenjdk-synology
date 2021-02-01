@@ -39,18 +39,6 @@ RELEASE="latest"
 JAVA_OS="linux"
 # normal, large - required with openj9
 JAVA_HEAP_SIZE="normal"
-# 8, 11
-[ "${JAVA_VERSION_11}" = "true" ] && JAVA_VERSION="11"
-[ "${JAVA_VERSION_8}" = "true" ] && JAVA_VERSION="8"
-if [ "${JAVA_VERSION_LATEST_FEATURE}" = "true" ] || [ "${JAVA_VERSION_LATEST_LTS}" = "true" ]; then
-  JSON_VER_RESPONSE=$(curl -sb -H "Accept: application/json" "https://api.adoptopenjdk.net/v3/info/available_releases")
-  if [ "${JAVA_VERSION_LATEST_FEATURE}" = "true" ]; then
-      JAVA_VERSION_JQ=".most_recent_feature_release"
-  else
-      JAVA_VERSION_JQ=".most_recent_lts"
-  fi
-  JAVA_VERSION=$(echo "${JSON_VER_RESPONSE}" | jq "${JAVA_VERSION_JQ}")
-fi
 
 # jdk, jre
 [ "${JAVA_IMAGE_TYPE_JDK}" = "true" ] && JAVA_IMAGE_TYPE="jdk"
@@ -65,13 +53,6 @@ esac
 
 #echo "${JAVA_ARCHITECTURE}"
 
-# i686 not supported
-if [ -z "${JAVA_ARCHITECTURE}" ]; then
-    echo "This platform is not supported: $(uname -m), ${SYNOPKG_DSM_ARCH}."
-    echo "Details: $(uname -a)"
-    exit 1
-fi
-
 # hotspot, openj9
 if [ "${JAVA_ARCHITECTURE}" = "x64" ] || [ "${JAVA_ARCHITECTURE}" = "aarch64" ]; then
   [ "${JVM_IMPL_OPENJ9}" = "true" ] && JVM_IMPL="openj9"
@@ -82,12 +63,32 @@ fi
 
 
 preinst() {
+  # choose JAVA_VERSION
+  # shellcheck disable=SC2039
+  for i in $(compgen -A variable | grep JAVA_VERSION_); do
+    if [ "$(eval echo \$"${i}")" = "true" ]; then
+      JAVA_VERSION=$(echo "$i" | sed -e 's/JAVA_VERSION_//g')
+    fi
+  done
+
+  if [ -z "${JAVA_VERSION}" ]; then
+    echo 'JAVA_VERSION not set!'
+    exit 1
+  fi
+
+  # i686 not supported
+  if [ -z "${JAVA_ARCHITECTURE}" ]; then
+    echo "This platform is not supported: $(uname -m), ${SYNOPKG_DSM_ARCH}."
+    echo "Details: $(uname -a)"
+    exit 1
+  fi
+
   # https://api.adoptopenjdk.net/v3/assets/latest/11/hotspot?release=latest&vendor=adoptopenjdk&
-  API_URL="https://api.adoptopenjdk.net/v3/assets/latest/${JAVA_VERSION}/${JVM_IMPL}?release=${RELEASE}&vendor=adoptopenjdk&"
+  API_URL="https://api.adoptopenjdk.net/v3/assets/latest/${JAVA_VERSION:?}/${JVM_IMPL:?}?release=${RELEASE:?}&vendor=adoptopenjdk&"
 
   JSON_RESPONSE=$(curl -sb -H "Accept: application/json" "${API_URL}")
 
-  DOWNLOAD_URL=$(echo "${JSON_RESPONSE}" | jq -r \
+  JSON_RESPONSE=$(echo "${JSON_RESPONSE}" | jq -r \
   --arg OS "${JAVA_OS}" \
   --arg IMAGE_TYPE "${JAVA_IMAGE_TYPE}" \
   --arg ARCHITECTURE "${JAVA_ARCHITECTURE}" \
@@ -96,8 +97,10 @@ preinst() {
   | select(.binary.os==$OS)
   | select(.binary.image_type==$IMAGE_TYPE)
   | select(.binary.architecture==$ARCHITECTURE)
-  | select(.binary.heap_size==$HEAP_SIZE)
-  | .binary.package.link')
+  | select(.binary.heap_size==$HEAP_SIZE)')
+
+  DOWNLOAD_URL=$(echo "$JSON_RESPONSE" | jq -r '.binary.package.link')
+  DOWNLOAD_CHECKSUM_SHA256_API=$(echo "$JSON_RESPONSE" | jq -r '.binary.package.checksum')
 
   #echo "${DOWNLOAD_URL}"
 
@@ -117,6 +120,14 @@ preinst() {
   #echo "Download starting"
   wget -O "${TEMP_FOLDER}/${JAVA_PKG_FILENAME}" "${DOWNLOAD_URL}"
   #echo "Download finished"
+
+  # verify archive via SHA-256 checksum
+  DOWNLOAD_CHECKSUM_SHA256_ACTUAL=$(openssl dgst -sha256 -hex "${TEMP_FOLDER}/${JAVA_PKG_FILENAME}" | awk '{print $NF}')
+
+  if [ "$DOWNLOAD_CHECKSUM_SHA256_ACTUAL" != "${DOWNLOAD_CHECKSUM_SHA256_API}" ]; then
+    echo "Expected SHA256 checksum: '$DOWNLOAD_CHECKSUM_SHA256_API', but got: '$DOWNLOAD_CHECKSUM_SHA256_ACTUAL'"
+    exit 1
+  fi
 }
 
 
@@ -128,7 +139,7 @@ postinst() {
   rm -rf "${SYNOPKG_PKGDEST:?}"/*
 
   #echo "Unzip downloaded package"
-  tar -xzf "${TEMP_FOLDER}/${JAVA_PKG_FILENAME}" -C "${SYNOPKG_PKGDEST:?}" --strip-components=1
+  tar -xzf "${TEMP_FOLDER:?}/${JAVA_PKG_FILENAME:?}" -C "${SYNOPKG_PKGDEST:?}" --strip-components=1
 
   #echo "Delete downloaded package"
   rm -f "${TEMP_FOLDER:?}/${JAVA_PKG_FILENAME:?}"

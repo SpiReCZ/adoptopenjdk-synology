@@ -1,11 +1,11 @@
 package="adoptopenjdk"
 displayname="AdoptOpenJDK"
-version="0.1"
+version="0.2"
 maintainer="SpiRe"
 maintainer_url="https://github.com/SpiReCZ/adoptopenjdk-synology"
 distributor="AdoptOpenJDK.net"
 distributor_url="https://adoptopenjdk.net/"
-description="This package serves as installer for AdoptOpenJDK to Synology NAS. Tested on: DSM 6.2.3 DS918+. Package should be installable on: x64, aarch64, arm (DSM). Package is not installable on: DS415Play. Please provide feedback about the package. If you encounter any problems please click on support URL and create an issue."
+description="This package serves as installer for AdoptOpenJDK on Synology NAS. Please provide feedback about the package. If you encounter any problems please click on support URL and create an issue."
 helpurl="https://github.com/SpiReCZ/adoptopenjdk-synology"
 support_url="https://github.com/SpiReCZ/adoptopenjdk-synology/issues"
 # x64, aarch64, arm (dsm)

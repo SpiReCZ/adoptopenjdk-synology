@@ -47,9 +47,6 @@ case $1 in
     #evidence of whether Java can start successfully is written to the package log
     java -version > "${SYNOPKG_PKGDEST}"/output.log 2>&1
     echo >> "${SYNOPKG_PKGDEST}"/output.log
-    echo System installed locales: >> "${SYNOPKG_PKGDEST}"/output.log
-    locale -a >> "${SYNOPKG_PKGDEST}"/output.log
-    echo >> "${SYNOPKG_PKGDEST}"/output.log
     echo JAVA_HOME="${JAVA_HOME}" >> "${SYNOPKG_PKGDEST}"/output.log
 
     exit 0

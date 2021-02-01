@@ -39,7 +39,8 @@ SPK Packager maven plugin example:
 ### AdoptOpenJDK support
 
 #### Tested on: 
-- DS918+ (DSM 6.2.3).
+- DS918+ (DSM 6.2.3) - Intel J3455 (x86_64)
+- DS218play (DSM 6.2.3) - Realtek RTD1296 (aarch64)
 
 #### Package is not installable on:
 - DS415Play - has x86 32bit cpu which AdoptOpenJDK does not support.
