@@ -83,8 +83,8 @@ preinst() {
     exit 1
   fi
 
-  # https://api.adoptopenjdk.net/v3/assets/latest/11/hotspot?release=latest&vendor=adoptopenjdk&
-  API_URL="https://api.adoptopenjdk.net/v3/assets/latest/${JAVA_VERSION:?}/${JVM_IMPL:?}?release=${RELEASE:?}&vendor=adoptopenjdk&"
+  # https://api.adoptopenjdk.net/v3/assets/latest/11/hotspot?release=latest&vendor=adoptopenjdk
+  API_URL="https://api.adoptopenjdk.net/v3/assets/latest/${JAVA_VERSION:?}/${JVM_IMPL:?}?release=${RELEASE:?}&vendor=adoptopenjdk"
 
   JSON_RESPONSE=$(curl -sb -H "Accept: application/json" "${API_URL}")
 
