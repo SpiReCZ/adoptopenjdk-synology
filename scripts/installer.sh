@@ -118,16 +118,10 @@ preinst() {
   #echo "${DOWNLOAD_URL}"
 
   #echo "Download starting"
-  wget -O "${TEMP_FOLDER}/${JAVA_PKG_FILENAME}" "${DOWNLOAD_URL}"
+  curl -L -o "${TEMP_FOLDER}/${JAVA_PKG_FILENAME}" "${DOWNLOAD_URL}"
   #echo "Download finished"
 
-  # verify archive via SHA-256 checksum
-  DOWNLOAD_CHECKSUM_SHA256_ACTUAL=$(openssl dgst -sha256 -hex "${TEMP_FOLDER}/${JAVA_PKG_FILENAME}" | awk '{print $NF}')
-
-  if [ "$DOWNLOAD_CHECKSUM_SHA256_ACTUAL" != "${DOWNLOAD_CHECKSUM_SHA256_API}" ]; then
-    echo "Expected SHA256 checksum: '$DOWNLOAD_CHECKSUM_SHA256_API', but got: '$DOWNLOAD_CHECKSUM_SHA256_ACTUAL'"
-    exit 1
-  fi
+  echo "$DOWNLOAD_CHECKSUM_SHA256_API ${TEMP_FOLDER}/${JAVA_PKG_FILENAME}" | sha256sum -c --quiet
 }
 
 

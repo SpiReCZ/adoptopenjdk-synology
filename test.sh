@@ -16,7 +16,16 @@ JAVA_IMAGE_TYPE=jre
 
 SYNOPKG_PKGDEST=./adoptopenjdk
 
-. scripts/installer.sh && preinst
-. scripts/installer.sh && postinst
+. scripts/installer.sh
+preinst
+postinst
 # better not use on your local environment ;)
-#. scripts/star-stop-status.sh start
+#echo "start-stop-status.sh"
+#scripts/start-stop-status.sh start
+#scripts/start-stop-status.sh stop
+#scripts/start-stop-status.sh status
+#scripts/start-stop-status.sh log
+#scripts/installer.sh && preupgrade
+#scripts/installer.sh && postupgrade
+#scripts/installer.sh && preuninst
+#scripts/installer.sh && postuninst

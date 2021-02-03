@@ -1,0 +1,76 @@
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ ci-test ]
+  pull_request:
+    branches: [ ci-test ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: centos
+    env: 
+      SYNOPKG_DSM_VERSION_MAJOR: 6
+      SYNOPKG_PKGDEST: ./adoptopenjdk
+      JAVA_VERSION_8: false
+      JAVA_VERSION_11: true
+      JAVA_VERSION_15: false
+      JAVA_IMAGE_TYPE: jre
+      JVM_IMPL: openj9
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: pre-init
+        run: |
+          yum install -y jq
+
+      - name: run installer
+        run: |
+          . scripts/installer.sh
+          preinst
+          postinst
+          
+      - name: run upgrade
+        run: |
+          . scripts/installer.sh
+          preupgrade
+          postupgrade
+                
+      - name: run uninstaller
+        run: |
+          . scripts/installer.sh
+          preuninst
+          postuninst
+      
+      - name: run UI generator
+        env:
+          SYNOPKG_TEMP_LOGFILE: ../install_uifile_temp
+        run: |
+          set -x
+          cd WIZARD_UIFILES
+          ./install_uifile.sh
+          cd ..
+          HAS_ERROR_LINES="$(cat ./install_uifile_temp | grep -c JAVA_UI_INSTALL_ERROR)"
+          [ "$HAS_ERROR_LINES" -ne 0 ] && exit 12
+          HAS_JAVA_LINES="$(cat ./install_uifile_temp | grep -c JAVA_VERSION_)"
+          [ "$HAS_JAVA_LINES" -lt 3 ] && exit 23
+          unset -x
+          
+      - name: run UI fallback generator
+        env:
+          SYNOPKG_TEMP_LOGFILE: ../install_uifile_temp
+        run: |
+          cd WIZARD_UIFILES
+          sed -e 's/\"step_title\":/;/g' ./install_uifile.sh
+          ./install_uifile.sh
+          cd ..
+          HAS_ERROR_LINES="$(cat ./install_uifile_temp | grep -c JAVA_UI_INSTALL_ERROR)"
+          [ "$HAS_ERROR_LINES" -ne 1 ] && exit 32
+
