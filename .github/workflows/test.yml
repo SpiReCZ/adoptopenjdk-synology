@@ -44,10 +44,10 @@ jobs:
           
       - name: run start-stop-status
         run: |
-          . scripts/start-stop-status.sh start
+          #. scripts/start-stop-status.sh start
           . scripts/start-stop-status.sh stop
-          . scripts/start-stop-status.sh status
-          . scripts/start-stop-status.sh log
+          #. scripts/start-stop-status.sh status
+          #. scripts/start-stop-status.sh log
           
       - name: run upgrade
         run: |
