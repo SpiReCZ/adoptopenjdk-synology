@@ -17,7 +17,8 @@ jobs:
     container: centos
     env: 
       SYNOPKG_DSM_VERSION_MAJOR: 6
-      SYNOPKG_PKGDEST: ./adoptopenjdk
+      SYNOPKG_PKGDEST: /var/packages/adoptopenjdk/target/
+      SYNOPKG_PKGNAME: adoptopenjdk
       JAVA_VERSION_8: false
       JAVA_VERSION_11: true
       JAVA_VERSION_15: false
@@ -27,15 +28,26 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: pre-init
+      - name: pre-init-sys
         run: |
           yum install -y jq
+          
+      - name: pre-init-env
+        run: |
+          mkdir -p $SYNOPKG_PKGDEST
 
       - name: run installer
         run: |
           . scripts/installer.sh
           preinst
           postinst
+          
+      - name: run start-stop-status
+        run: |
+          . scripts/start-stop-status.sh start
+          . scripts/start-stop-status.sh stop
+          . scripts/start-stop-status.sh status
+          . scripts/start-stop-status.sh log
           
       - name: run upgrade
         run: |
