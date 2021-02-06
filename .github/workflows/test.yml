@@ -44,10 +44,13 @@ jobs:
           
       - name: run start-stop-status
         run: |
-          #. scripts/start-stop-status.sh start
+          ls -la /etc
+          ls -la /root
+          . scripts/start-stop-status.sh start
           . scripts/start-stop-status.sh stop
-          #. scripts/start-stop-status.sh status
-          #. scripts/start-stop-status.sh log
+          . scripts/start-stop-status.sh status
+          . scripts/start-stop-status.sh log
+          cat "${SYNOPKG_PKGDEST}"/output.log
           
       - name: run upgrade
         run: |
