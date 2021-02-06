@@ -49,6 +49,23 @@ jobs:
           preuninst
           postuninst
           
+      - name: run UI generator
+        env:
+          SYNOPKG_TEMP_LOGFILE: ../install_uifile_temp
+        run: |
+          set -x
+          unset -e
+          cd WIZARD_UIFILES
+          ./install_uifile.sh
+          echo $?
+          cd ..
+          HAS_ERROR_LINES="$(cat ./install_uifile_temp | grep -c JAVA_UI_INSTALL_ERROR)"
+          [ "$HAS_ERROR_LINES" -ne 0 ] && exit 12
+          HAS_JAVA_LINES="$(cat ./install_uifile_temp | grep -c JAVA_VERSION_)"
+          [ "$HAS_JAVA_LINES" -lt 3 ] && exit 23
+          unset -x
+          set -e
+          
       - name: run UI fallback generator
         env:
           SYNOPKG_TEMP_LOGFILE: ../install_uifile_temp
