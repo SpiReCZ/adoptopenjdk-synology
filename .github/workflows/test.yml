@@ -53,18 +53,15 @@ jobs:
         env:
           SYNOPKG_TEMP_LOGFILE: ../install_uifile_temp
         run: |
-          set -x
-          set +e
           cd WIZARD_UIFILES
+          set +e
           ./install_uifile.sh
-          echo $?
+          set -e
           cd ..
           HAS_ERROR_LINES="$(cat ./install_uifile_temp | grep -c JAVA_UI_INSTALL_ERROR)"
           [ "$HAS_ERROR_LINES" -ne 0 ] && exit 12
           HAS_JAVA_LINES="$(cat ./install_uifile_temp | grep -c JAVA_VERSION_)"
           [ "$HAS_JAVA_LINES" -lt 3 ] && exit 23
-          set +x
-          set -e
           
       - name: run UI fallback generator
         env:
@@ -72,7 +69,9 @@ jobs:
         run: |
           cd WIZARD_UIFILES
           sed -e 's/\"step_title\":/;/g' ./install_uifile.sh
+          set +e
           ./install_uifile.sh
+          set -e
           cd ..
           HAS_ERROR_LINES="$(cat ./install_uifile_temp | grep -c JAVA_UI_INSTALL_ERROR)"
           [ "$HAS_ERROR_LINES" -ne 1 ] && exit 32
