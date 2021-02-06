@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh +e
 
 INSTALL_UIFILE_TEMPLATE=$(/bin/cat<<EOF
 [
