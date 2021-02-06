@@ -69,7 +69,8 @@ jobs:
           SYNOPKG_TEMP_LOGFILE: ../install_uifile_temp
         run: |
           cd WIZARD_UIFILES
-          sed -e 's/\"step_title\":/;/g' ./install_uifile.sh
+          sed -e 's/\"step_title\":/;/g' ./install_uifile.sh > ./tmpfile && mv ./tmpfile ./install_uifile.sh
+          chmod 755 ./install_uifile.sh
           ./install_uifile.sh
           HAS_ERROR_LINES="$(grep -c JAVA_UI_INSTALL_ERROR $SYNOPKG_TEMP_LOGFILE)" || true
           if [ "$HAS_ERROR_LINES" -ne 1 ]; then
