@@ -1,6 +1,6 @@
 package="adoptopenjdk"
 displayname="AdoptOpenJDK"
-version="0.3"
+version="0.4"
 maintainer="SpiRe"
 maintainer_url="https://github.com/SpiReCZ/adoptopenjdk-synology"
 distributor="AdoptOpenJDK.net"

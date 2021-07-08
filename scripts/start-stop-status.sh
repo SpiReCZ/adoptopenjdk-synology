@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Original part of this script by: pcloadletter.co.uk
-JDK_PATH="/var/packages/${SYNOPKG_PKGNAME}/target/"
+JDK_PATH="/var/packages/${SYNOPKG_PKGNAME}/target"
 #JRE_PATH="$(find "${JDK_PATH}" -name jre 2>/dev/null | grep . || echo "${JDK_PATH}")"
 JRE_PATH=${JDK_PATH}
 COMMENT="# AdoptOpenJDK Java Package"
