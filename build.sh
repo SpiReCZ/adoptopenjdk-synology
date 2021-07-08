@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This is custom tailored script inspired by: https://github.com/palsbo/synology-spk-maker
 
